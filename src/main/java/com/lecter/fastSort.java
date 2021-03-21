@@ -11,6 +11,7 @@ public class fastSort {
         //temp就是基准位
         temp = arr[low];
 
+
         while (i < j) {
             //先看右边，依次往左递减
             while (temp <= arr[j] && i < j) {
