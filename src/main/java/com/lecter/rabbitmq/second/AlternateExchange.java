@@ -67,6 +67,10 @@ public class AlternateExchange {
         Map<String,Object> ttlArgs = new HashMap<String, Object>();
         ttlArgs.put("x-message-ttl",6000);
         channel.queueDeclare(QUEUE_NAME,true,false,false,ttlArgs);
+        // 设置过期队列时间参数：时间到期后自动删除队列，前提是队列未被使用过，无消费者，未被再次声明，未调用过Basic.Get
+        Map<String,Object> ttlQueueArgs = new HashMap<String, Object>();
+        ttlArgs.put("x-expires",180000);
+        channel.queueDeclare(QUEUE_NAME,true,false,false,ttlQueueArgs);
         // 路由和队列绑定
         channel.queueBind(QUEUE_NAME,EXCHANCE_NAME,ROUTING_KEY);
         // 路由和路由绑定

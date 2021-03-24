@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class RabbitmqConsumer {
-    private static final String QUEUE_NAME = "queue_demo";
+    private static final String QUEUE_NAME = "queue_name";
     private static final String IP_ADDRESS = "127.0.0.1";
     private static final int PORT = 5672;
 

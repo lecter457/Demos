@@ -1,15 +1,14 @@
-package com.lecter.rabbitmq.frist;
+package com.lecter.rabbitmq.second;
 
-
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.MessageProperties;
+import com.rabbitmq.client.*;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class RabbitmqProducer {
+public class DeadLetterExchange {
     // 交换器名称
     private static final String EXCHANGE_NAME = "exchange_name";
     // 路由键名
@@ -35,6 +34,17 @@ public class RabbitmqProducer {
         channel.exchangeDeclare(EXCHANGE_NAME,"direct",true,false,null);
         // 创建持久化、非排他的、非自动删除的队列
         channel.queueDeclare(QUEUE_NAME,true,false,false,null);
+        // 创建死信队列的交换器
+        channel.exchangeDeclare(EXCHANGE_NAME,"direct");
+        // 设置死信参数
+        Map<String,Object> dlxArgs = new HashMap<String, Object>();
+        dlxArgs.put("x-dead-letter-exchange","dlx_exchange");
+        // 指定死信队列路由键
+        dlxArgs.put("x-dead-letter-routing-key","dlx-routing-key");
+        // policy方式指定
+        // rabbitmqctl set_policy DLX ".*" '{"dead-letter-exchange":" dlx_exchange "}' --apply-to queues
+        // 创建死信队列
+        channel.queueDeclare(QUEUE_NAME,false,false,false,dlxArgs);
         // 将交换器和队列绑定
         channel.queueBind(QUEUE_NAME,EXCHANGE_NAME,ROUTING_KEY);
         // 发送一条持久化的消息
